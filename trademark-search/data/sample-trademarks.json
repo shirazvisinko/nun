@@ -1,0 +1,183 @@
+[
+  {
+    "number": "2001001",
+    "words": "CLOUDLEDGER",
+    "status": "Registered",
+    "kind": "Word",
+    "classes": [9, 35, 42],
+    "goodsServices": [
+      { "classNumber": 9, "description": "Downloadable accounting software; cloud-based bookkeeping software" },
+      { "classNumber": 35, "description": "Accounting services; bookkeeping; payroll preparation" },
+      { "classNumber": 42, "description": "Software as a service (SaaS) featuring accounting and invoicing tools" }
+    ],
+    "owners": ["CloudLedger Pty Ltd"],
+    "lodgementDate": "2023-02-14",
+    "registrationDate": "2023-09-01",
+    "detailsUrl": "https://search.ipaustralia.gov.au/trademarks/search/view/2001001"
+  },
+  {
+    "number": "2001002",
+    "words": "NEURALNEST AI",
+    "status": "Registered",
+    "kind": "Word",
+    "classes": [9, 42],
+    "goodsServices": [
+      { "classNumber": 9, "description": "Artificial intelligence software; machine learning models; downloadable chatbot software" },
+      { "classNumber": 42, "description": "Design and development of artificial intelligence software; natural language processing services" }
+    ],
+    "owners": ["NeuralNest Technologies Pty Ltd"],
+    "lodgementDate": "2024-05-20",
+    "registrationDate": "2025-01-12",
+    "detailsUrl": "https://search.ipaustralia.gov.au/trademarks/search/view/2001002"
+  },
+  {
+    "number": "2001003",
+    "words": "TAXMATE",
+    "status": "Registered",
+    "kind": "Word",
+    "classes": [35, 36],
+    "goodsServices": [
+      { "classNumber": 35, "description": "Tax preparation; taxation advisory services; audit services; BAS agent services" },
+      { "classNumber": 36, "description": "Financial planning; superannuation fund advisory services" }
+    ],
+    "owners": ["TaxMate Advisory Group Pty Ltd"],
+    "lodgementDate": "2022-07-01",
+    "registrationDate": "2023-02-15",
+    "detailsUrl": "https://search.ipaustralia.gov.au/trademarks/search/view/2001003"
+  },
+  {
+    "number": "2001004",
+    "words": "BIZBOOST",
+    "status": "Pending",
+    "kind": "Word",
+    "classes": [35],
+    "goodsServices": [
+      { "classNumber": 35, "description": "Small business advisory services; business coaching for startups; business management consulting for sole traders" }
+    ],
+    "owners": ["BizBoost Consulting Pty Ltd"],
+    "lodgementDate": "2025-11-03",
+    "registrationDate": "",
+    "detailsUrl": "https://search.ipaustralia.gov.au/trademarks/search/view/2001004"
+  },
+  {
+    "number": "2001005",
+    "words": "QUANTUMSTACK",
+    "status": "Registered",
+    "kind": "Word",
+    "classes": [9, 38, 42],
+    "goodsServices": [
+      { "classNumber": 9, "description": "Computer hardware; downloadable cloud computing software" },
+      { "classNumber": 38, "description": "Telecommunications services; providing access to cloud platforms" },
+      { "classNumber": 42, "description": "Cloud hosting services; information technology consulting; cyber security services" }
+    ],
+    "owners": ["QuantumStack Pty Ltd"],
+    "lodgementDate": "2021-03-30",
+    "registrationDate": "2021-11-22",
+    "detailsUrl": "https://search.ipaustralia.gov.au/trademarks/search/view/2001005"
+  },
+  {
+    "number": "2001006",
+    "words": "PAYPILOT",
+    "status": "Registered",
+    "kind": "Word",
+    "classes": [9, 35, 36],
+    "goodsServices": [
+      { "classNumber": 9, "description": "Downloadable payroll software; mobile applications for invoicing" },
+      { "classNumber": 35, "description": "Payroll processing services; accounts payable and receivable management" },
+      { "classNumber": 36, "description": "Electronic payment services; banking services" }
+    ],
+    "owners": ["PayPilot Financial Pty Ltd"],
+    "lodgementDate": "2023-08-11",
+    "registrationDate": "2024-03-19",
+    "detailsUrl": "https://search.ipaustralia.gov.au/trademarks/search/view/2001006"
+  },
+  {
+    "number": "2001007",
+    "words": "STARTUP SHERPA",
+    "status": "Registered",
+    "kind": "Word",
+    "classes": [35, 41],
+    "goodsServices": [
+      { "classNumber": 35, "description": "Business mentoring for entrepreneurs; small business development services; franchising advisory" },
+      { "classNumber": 41, "description": "Business training workshops; education services for small business owners" }
+    ],
+    "owners": ["Sherpa Ventures Pty Ltd"],
+    "lodgementDate": "2022-12-05",
+    "registrationDate": "2023-07-18",
+    "detailsUrl": "https://search.ipaustralia.gov.au/trademarks/search/view/2001007"
+  },
+  {
+    "number": "2001008",
+    "words": "VISIONFORGE",
+    "status": "Pending",
+    "kind": "Word",
+    "classes": [9, 42],
+    "goodsServices": [
+      { "classNumber": 9, "description": "Computer vision software; deep learning software for image recognition" },
+      { "classNumber": 42, "description": "Development of machine learning algorithms; predictive analytics services; data science consulting" }
+    ],
+    "owners": ["VisionForge Labs Pty Ltd"],
+    "lodgementDate": "2026-01-22",
+    "registrationDate": "",
+    "detailsUrl": "https://search.ipaustralia.gov.au/trademarks/search/view/2001008"
+  },
+  {
+    "number": "2001009",
+    "words": "LEDGERLIGHT",
+    "status": "Removed",
+    "kind": "Word",
+    "classes": [35],
+    "goodsServices": [
+      { "classNumber": 35, "description": "Bookkeeping services; accounting consultancy; preparation of financial statements" }
+    ],
+    "owners": ["LedgerLight Services Pty Ltd"],
+    "lodgementDate": "2015-04-09",
+    "registrationDate": "2015-12-01",
+    "detailsUrl": "https://search.ipaustralia.gov.au/trademarks/search/view/2001009"
+  },
+  {
+    "number": "2001010",
+    "words": "APPHARBOUR",
+    "status": "Registered",
+    "kind": "Word",
+    "classes": [9, 42],
+    "goodsServices": [
+      { "classNumber": 9, "description": "Downloadable mobile applications; software development kits" },
+      { "classNumber": 42, "description": "Mobile application development services; website hosting; API integration services" }
+    ],
+    "owners": ["AppHarbour Digital Pty Ltd"],
+    "lodgementDate": "2020-09-17",
+    "registrationDate": "2021-04-02",
+    "detailsUrl": "https://search.ipaustralia.gov.au/trademarks/search/view/2001010"
+  },
+  {
+    "number": "2001011",
+    "words": "SMARTAUDIT AI",
+    "status": "Registered",
+    "kind": "Word",
+    "classes": [9, 35, 42],
+    "goodsServices": [
+      { "classNumber": 9, "description": "Artificial intelligence software for auditing; automated compliance software" },
+      { "classNumber": 35, "description": "Auditing services; tax compliance services using automated systems" },
+      { "classNumber": 42, "description": "Software as a service featuring machine learning for financial auditing" }
+    ],
+    "owners": ["SmartAudit AI Pty Ltd"],
+    "lodgementDate": "2024-10-08",
+    "registrationDate": "2025-06-30",
+    "detailsUrl": "https://search.ipaustralia.gov.au/trademarks/search/view/2001011"
+  },
+  {
+    "number": "2001012",
+    "words": "TRADEWINDS MARKETING",
+    "status": "Registered",
+    "kind": "Word",
+    "classes": [35],
+    "goodsServices": [
+      { "classNumber": 35, "description": "Marketing services for small business; advertising services; business promotion for SMEs" }
+    ],
+    "owners": ["Tradewinds Media Pty Ltd"],
+    "lodgementDate": "2019-06-25",
+    "registrationDate": "2020-01-14",
+    "detailsUrl": "https://search.ipaustralia.gov.au/trademarks/search/view/2001012"
+  }
+]

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AU Trade Mark Search — Tech, Accounting, Small Business &amp; AI</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>AU Trade Mark Search</h1>
+      <p class="tagline">
+        Search Australian trade marks in <strong>technology</strong>,
+        <strong>accounting</strong>, <strong>small business</strong> and
+        <strong>AI</strong> — powered by IP Australia's Trade Mark Search API.
+      </p>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="demo-banner" class="banner hidden">
+      Running in <strong>demo mode</strong> with sample data. Add your free
+      IP Australia API credentials to search real trade marks — see the README.
+    </div>
+
+    <form id="search-form" class="search-panel" autocomplete="off">
+      <div class="search-row">
+        <input
+          id="search-input"
+          type="search"
+          placeholder="Search trade marks… e.g. cloud, tax, ledger, AI"
+          required
+        />
+        <button type="submit" id="search-btn">Search</button>
+      </div>
+
+      <fieldset class="chips" id="category-chips">
+        <legend>Focus areas</legend>
+        <!-- populated from /api/meta -->
+      </fieldset>
+
+      <fieldset class="chips" id="status-chips">
+        <legend>Status</legend>
+        <label class="chip"><input type="checkbox" value="REGISTERED" checked /><span>Registered</span></label>
+        <label class="chip"><input type="checkbox" value="PENDING" checked /><span>Pending</span></label>
+        <label class="chip"><input type="checkbox" value="REMOVED" /><span>Removed</span></label>
+      </fieldset>
+    </form>
+
+    <section id="results-meta" class="results-meta hidden"></section>
+    <section id="results" class="results" aria-live="polite"></section>
+    <div id="loading" class="loading hidden">Searching IP Australia…</div>
+    <div id="error" class="banner error hidden"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Data sourced from
+      <a href="https://search.ipaustralia.gov.au/" target="_blank" rel="noopener">IP Australia</a>.
+      This tool is not legal advice — verify results on the official register
+      before making decisions.
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
