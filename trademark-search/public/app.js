@@ -42,6 +42,18 @@ form.addEventListener('submit', async (e) => {
   await runSearch();
 });
 
+// "All industries" and the focus-area chips are mutually exclusive:
+// ticking one side unticks the other.
+categoryChips.addEventListener('change', (e) => {
+  const boxes = [...categoryChips.querySelectorAll('input')];
+  if (e.target.value === 'all' && e.target.checked) {
+    boxes.forEach((b) => { if (b.value !== 'all') b.checked = false; });
+  } else if (e.target.value !== 'all' && e.target.checked) {
+    const allBox = document.getElementById('all-industries');
+    if (allBox) allBox.checked = false;
+  }
+});
+
 async function runSearch() {
   const q = input.value.trim();
   const days = document.getElementById('period').value;
@@ -79,18 +91,21 @@ async function runSearch() {
 function renderResults(data) {
   const what = data.query ? `“${data.query}”` : 'recent trade marks';
   const since = data.since ? ` registered since ${data.since}` : '';
+  const allIndustries = data.activeCategories === 'all';
+  const scope = allIndustries ? 'across all industries' : 'in your focus areas';
   resultsMeta.classList.remove('hidden');
   resultsMeta.textContent =
     data.count === 0
-      ? `No matches for ${what}${since} in the selected focus areas` +
-        ` (${data.scanned} scanned).`
+      ? `No matches for ${what}${since} ${scope} (${data.scanned} scanned).`
       : `${data.count} matching trade mark${data.count === 1 ? '' : 's'}` +
-        ` for ${what}${since} (${data.scanned} scanned, filtered to your focus areas).`;
+        ` for ${what}${since} (${data.scanned} scanned, ${scope}).`;
 
   if (data.count === 0) {
     resultsEl.innerHTML =
       data.scanned > 0
-        ? '<div class="empty">Trade marks were found, but none fit your selected focus areas or time period. Try ticking more focus areas or a longer time period.</div>'
+        ? `<div class="empty">Trade marks were found, but none fit your ${
+            allIndustries ? 'time period or statuses' : 'selected focus areas or time period'
+          }. Try ${allIndustries ? 'a longer time period' : 'ticking more focus areas, "All industries", or a longer time period'}.</div>`
         : '<div class="empty">Nothing found. Try a broader term or different statuses.</div>';
     return;
   }

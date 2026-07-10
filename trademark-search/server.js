@@ -51,10 +51,11 @@ app.get('/api/search', async (req, res) => {
       .json({ error: 'Enter a search term, or pick a time period to browse recent trade marks.' });
   }
 
-  const requestedCats = String(req.query.categories || '')
+  const rawCats = String(req.query.categories || '')
     .split(',')
-    .map((c) => c.trim())
-    .filter((c) => ALL_CATEGORY_IDS.includes(c));
+    .map((c) => c.trim());
+  const allIndustries = rawCats.includes('all');
+  const requestedCats = rawCats.filter((c) => ALL_CATEGORY_IDS.includes(c));
   const activeCats = requestedCats.length > 0 ? requestedCats : ALL_CATEGORY_IDS;
 
   const statuses = String(req.query.statuses || '')
@@ -73,7 +74,10 @@ app.get('/api/search', async (req, res) => {
       .filter((mark) => matchesStatuses(mark, statuses))
       .filter((mark) => matchesCutoff(mark, cutoff))
       .map((mark) => ({ ...mark, categories: categoriseMark(mark) }))
-      .filter((mark) => mark.categories.some((c) => activeCats.includes(c)));
+      .filter(
+        (mark) =>
+          allIndustries || mark.categories.some((c) => activeCats.includes(c)),
+      );
 
     if (cutoff) {
       results = results.sort((a, b) =>
@@ -90,7 +94,7 @@ app.get('/api/search', async (req, res) => {
       mode: ipa.hasCredentials() ? 'live' : 'demo',
       query,
       since: cutoff,
-      activeCategories: activeCats,
+      activeCategories: allIndustries ? 'all' : activeCats,
       scanned: marks.length,
       count: results.length,
       results,
