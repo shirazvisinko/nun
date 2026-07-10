@@ -85,32 +85,47 @@ async function authedFetch(url, options = {}) {
 // ---------------------------------------------------------------------------
 
 async function quickSearch({ query, statuses, changedSinceDate }) {
-  const basePayload = {};
-  if (query) basePayload.query = query;
-  if (changedSinceDate) basePayload.changedSinceDate = changedSinceDate;
+  // The API requires a query, so browsing without a search term uses a
+  // wildcard. If the API rejects a payload (400), progressively simplify
+  // it — the caller re-applies status/date filters from the detail
+  // records anyway.
+  const q = query || '*';
+  const attempts = [];
 
-  const withFilters = { ...basePayload };
+  const full = { query: q };
+  if (changedSinceDate) full.changedSinceDate = changedSinceDate;
   if (Array.isArray(statuses) && statuses.length > 0) {
-    withFilters.filters = { status: statuses };
+    full.filters = { status: statuses };
   }
+  attempts.push(full);
+  if (full.filters) {
+    const noFilters = { query: q };
+    if (changedSinceDate) noFilters.changedSinceDate = changedSinceDate;
+    attempts.push(noFilters);
+  }
+  if (changedSinceDate) attempts.push({ query: q });
 
-  let res = await postQuickSearch(withFilters);
-
-  // If the API rejects our payload (e.g. a filter enum it doesn't accept),
-  // fall back to the plainest possible request; the caller filters
-  // client-side from the detail records anyway.
-  if (res.status === 400 && (withFilters.filters || changedSinceDate)) {
-    const rejected = await res.text().catch(() => '');
+  let res = null;
+  let errorText = '';
+  for (const payload of attempts) {
+    res = await postQuickSearch(payload);
+    if (res.ok) break;
+    errorText = await res.text().catch(() => '');
+    if (res.status !== 400) break;
     console.warn(
-      `Quick search payload rejected (400): ${rejected.slice(0, 300)} — retrying without filters`,
+      `Quick search rejected payload ${JSON.stringify(payload)} (400): ` +
+        `${errorText.slice(0, 200)} — trying a simpler request`,
     );
-    res = await postQuickSearch(basePayload.query ? { query: basePayload.query } : basePayload);
   }
 
   if (!res.ok) {
-    const text = await res.text().catch(() => '');
+    if (!query && res.status === 400) {
+      throw new Error(
+        "IP Australia's search needs a search term — type a word (e.g. tech, accounting) and keep the time period selected.",
+      );
+    }
     throw new Error(
-      `Quick search failed (${res.status}): ${text.slice(0, 300)}`,
+      `Quick search failed (${res.status}): ${errorText.slice(0, 300)}`,
     );
   }
 
