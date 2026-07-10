@@ -44,8 +44,11 @@ app.get('/api/meta', (_req, res) => {
 
 app.get('/api/search', async (req, res) => {
   const query = String(req.query.q || '').trim();
-  if (!query) {
-    return res.status(400).json({ error: 'Missing search term (q).' });
+  const days = Math.min(Number(req.query.days) || 0, 3660);
+  if (!query && !days) {
+    return res
+      .status(400)
+      .json({ error: 'Enter a search term, or pick a time period to browse recent trade marks.' });
   }
 
   const requestedCats = String(req.query.categories || '')
@@ -59,18 +62,34 @@ app.get('/api/search', async (req, res) => {
     .map((s) => s.trim().toUpperCase())
     .filter(Boolean);
 
+  const cutoff = days ? isoDaysAgo(days) : null;
+
   try {
     const marks = ipa.hasCredentials()
-      ? await liveSearch(query, statuses)
-      : demoSearch(query, statuses);
+      ? await liveSearch(query, statuses, cutoff)
+      : demoSearch(query);
 
-    const results = marks
+    let results = marks
+      .filter((mark) => matchesStatuses(mark, statuses))
+      .filter((mark) => matchesCutoff(mark, cutoff))
       .map((mark) => ({ ...mark, categories: categoriseMark(mark) }))
       .filter((mark) => mark.categories.some((c) => activeCats.includes(c)));
+
+    if (cutoff) {
+      results = results.sort((a, b) =>
+        relevantDate(b).localeCompare(relevantDate(a)),
+      );
+    }
+
+    console.log(
+      `Search "${query || '(recent only)'}"${cutoff ? ` since ${cutoff}` : ''}: ` +
+        `${marks.length} scanned, ${results.length} after filters`,
+    );
 
     res.json({
       mode: ipa.hasCredentials() ? 'live' : 'demo',
       query,
+      since: cutoff,
       activeCategories: activeCats,
       scanned: marks.length,
       count: results.length,
@@ -84,8 +103,8 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-async function liveSearch(query, statuses) {
-  const numbers = await ipa.quickSearch({ query, statuses });
+async function liveSearch(query, statuses, changedSinceDate) {
+  const numbers = await ipa.quickSearch({ query, statuses, changedSinceDate });
   const toFetch = numbers.slice(0, MAX_DETAIL_LOOKUPS);
 
   const marks = [];
@@ -99,8 +118,9 @@ async function liveSearch(query, statuses) {
   return marks;
 }
 
-function demoSearch(query, statuses) {
+function demoSearch(query) {
   const q = query.toLowerCase();
+  if (!q || q === '*') return [...SAMPLE_MARKS];
   return SAMPLE_MARKS.filter((mark) => {
     const text = [
       mark.words,
@@ -110,11 +130,34 @@ function demoSearch(query, statuses) {
     ]
       .join(' ')
       .toLowerCase();
-    const textHit = q === '*' || text.includes(q);
-    const statusHit =
-      statuses.length === 0 || statuses.includes(mark.status.toUpperCase());
-    return textHit && statusHit;
+    return text.includes(q);
   });
+}
+
+/** Status filter applied from the detail records (works even when the quick
+ *  search API rejected our status filter). Uses a loose "contains" match so
+ *  e.g. "Registered: Registered/protected" still counts as REGISTERED. */
+function matchesStatuses(mark, statuses) {
+  if (statuses.length === 0) return true;
+  const s = String(mark.status || '').toUpperCase();
+  return statuses.some((wanted) => s.includes(wanted));
+}
+
+/** Keep marks whose registration date (or, failing that, filing date) falls
+ *  on/after the cutoff. Dates compare as ISO strings (YYYY-MM-DD). */
+function matchesCutoff(mark, cutoff) {
+  if (!cutoff) return true;
+  const date = relevantDate(mark);
+  return Boolean(date) && date.slice(0, 10) >= cutoff;
+}
+
+function relevantDate(mark) {
+  return String(mark.registrationDate || mark.lodgementDate || '');
+}
+
+function isoDaysAgo(days) {
+  const d = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  return d.toISOString().slice(0, 10);
 }
 
 /** Minimal .env loader so the app has no config dependencies. */

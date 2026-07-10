@@ -30,10 +30,19 @@
           id="search-input"
           type="search"
           placeholder="Search trade marks… e.g. cloud, tax, ledger, AI"
-          required
         />
+        <select id="period" title="Time period">
+          <option value="">Any time</option>
+          <option value="31">Registered in last month</option>
+          <option value="92">Registered in last 3 months</option>
+          <option value="365">Registered in last year</option>
+        </select>
         <button type="submit" id="search-btn">Search</button>
       </div>
+      <p class="hint">
+        Tip: pick a time period and leave the search box empty to browse
+        everything recently registered in your focus areas.
+      </p>
 
       <fieldset class="chips" id="category-chips">
         <legend>Focus areas</legend>

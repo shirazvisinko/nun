@@ -84,19 +84,28 @@ async function authedFetch(url, options = {}) {
 // Quick search: returns a list of trade mark numbers
 // ---------------------------------------------------------------------------
 
-async function quickSearch({ query, statuses }) {
-  const payload = { query };
-  const filters = {};
-  if (Array.isArray(statuses) && statuses.length > 0) {
-    filters.status = statuses;
-  }
-  if (Object.keys(filters).length > 0) payload.filters = filters;
+async function quickSearch({ query, statuses, changedSinceDate }) {
+  const basePayload = {};
+  if (query) basePayload.query = query;
+  if (changedSinceDate) basePayload.changedSinceDate = changedSinceDate;
 
-  const res = await authedFetch(`${SEARCH_API}/search/quick`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
+  const withFilters = { ...basePayload };
+  if (Array.isArray(statuses) && statuses.length > 0) {
+    withFilters.filters = { status: statuses };
+  }
+
+  let res = await postQuickSearch(withFilters);
+
+  // If the API rejects our payload (e.g. a filter enum it doesn't accept),
+  // fall back to the plainest possible request; the caller filters
+  // client-side from the detail records anyway.
+  if (res.status === 400 && (withFilters.filters || changedSinceDate)) {
+    const rejected = await res.text().catch(() => '');
+    console.warn(
+      `Quick search payload rejected (400): ${rejected.slice(0, 300)} — retrying without filters`,
+    );
+    res = await postQuickSearch(basePayload.query ? { query: basePayload.query } : basePayload);
+  }
 
   if (!res.ok) {
     const text = await res.text().catch(() => '');
@@ -106,27 +115,69 @@ async function quickSearch({ query, statuses }) {
   }
 
   const data = await res.json();
-  return extractNumbers(data);
+  const numbers = extractNumbers(data);
+  if (numbers.length === 0) {
+    console.log(
+      'Quick search returned no trade mark numbers. Raw response sample:',
+      JSON.stringify(data).slice(0, 600),
+    );
+  } else {
+    console.log(`Quick search matched ${numbers.length} trade mark number(s).`);
+  }
+  return numbers;
+}
+
+function postQuickSearch(payload) {
+  return authedFetch(`${SEARCH_API}/search/quick`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
 }
 
 /** Pull trade mark numbers out of the response defensively — the API returns
  *  a list of numbers, but wrap shapes vary between versions. */
 function extractNumbers(data) {
-  const candidates =
+  const direct =
     (Array.isArray(data) && data) ||
     data.results ||
     data.tradeMarks ||
+    data.tradeMarkNumbers ||
     data.numbers ||
     data.items ||
-    [];
-  return candidates
+    null;
+  const fromDirect = direct ? numbersFromArray(direct) : [];
+  if (fromDirect.length > 0) return fromDirect;
+
+  // Fallback: breadth-first scan for any array of number-like entries
+  // anywhere in the response, so an unexpected wrapper key still works.
+  const queue = [data];
+  while (queue.length > 0) {
+    const node = queue.shift();
+    if (Array.isArray(node)) {
+      const nums = numbersFromArray(node);
+      if (nums.length > 0) return nums;
+      queue.push(...node.filter((v) => v && typeof v === 'object'));
+    } else if (node && typeof node === 'object') {
+      queue.push(...Object.values(node).filter((v) => v && typeof v === 'object'));
+    }
+  }
+  return [];
+}
+
+function numbersFromArray(arr) {
+  if (!Array.isArray(arr)) return [];
+  return arr
     .map((item) => {
       if (typeof item === 'string' || typeof item === 'number') return String(item);
-      return String(
-        item.number || item.tradeMarkNumber || item.applicationNumber || '',
-      );
+      if (item && typeof item === 'object') {
+        return String(
+          item.number || item.tradeMarkNumber || item.applicationNumber || '',
+        );
+      }
+      return '';
     })
-    .filter(Boolean);
+    .filter((n) => /^\d+$/.test(n));
 }
 
 // ---------------------------------------------------------------------------

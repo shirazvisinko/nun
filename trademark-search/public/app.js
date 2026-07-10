@@ -44,7 +44,11 @@ form.addEventListener('submit', async (e) => {
 
 async function runSearch() {
   const q = input.value.trim();
-  if (!q) return;
+  const days = document.getElementById('period').value;
+  if (!q && !days) {
+    showError('Type a search term, or pick a time period to browse recent trade marks.');
+    return;
+  }
 
   const categories = checkedValues(categoryChips);
   const statuses = checkedValues(statusChips);
@@ -57,6 +61,7 @@ async function runSearch() {
   try {
     const params = new URLSearchParams({
       q,
+      days,
       categories: categories.join(','),
       statuses: statuses.join(','),
     });
@@ -72,17 +77,21 @@ async function runSearch() {
 }
 
 function renderResults(data) {
+  const what = data.query ? `“${data.query}”` : 'recent trade marks';
+  const since = data.since ? ` registered since ${data.since}` : '';
   resultsMeta.classList.remove('hidden');
   resultsMeta.textContent =
     data.count === 0
-      ? `No matching trade marks for “${data.query}” in the selected focus areas` +
+      ? `No matches for ${what}${since} in the selected focus areas` +
         ` (${data.scanned} scanned).`
       : `${data.count} matching trade mark${data.count === 1 ? '' : 's'}` +
-        ` for “${data.query}” (${data.scanned} scanned, filtered to your focus areas).`;
+        ` for ${what}${since} (${data.scanned} scanned, filtered to your focus areas).`;
 
   if (data.count === 0) {
     resultsEl.innerHTML =
-      '<div class="empty">Nothing found. Try a broader term or enable more focus areas / statuses.</div>';
+      data.scanned > 0
+        ? '<div class="empty">Trade marks were found, but none fit your selected focus areas or time period. Try ticking more focus areas or a longer time period.</div>'
+        : '<div class="empty">Nothing found. Try a broader term or different statuses.</div>';
     return;
   }
 

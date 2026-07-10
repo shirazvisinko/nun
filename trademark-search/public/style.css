@@ -66,6 +66,21 @@ body {
 }
 #search-input:focus { outline: 2px solid var(--accent); border-color: transparent; }
 
+#period {
+  font-size: 0.95rem;
+  padding: 0.65rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.hint {
+  margin: 0.6rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 #search-btn {
   font-size: 1rem;
   padding: 0.65rem 1.4rem;
